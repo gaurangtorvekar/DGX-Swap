@@ -1,3 +1,7 @@
+// Version 0.1
+// This swap contract was created by Attores and released under a GPL license
+// Visit attores.com for more contracts and Smart contract as a Service 
+
 // This is the standard token interface
 contract TokenInterface {
 
@@ -65,16 +69,7 @@ contract TokenInterface {
   /// @param _amount The amount of tokens to mint
   /// @return Whether or not minting was successful
   function mint(address _owner, uint256 _amount) returns (bool success);
-
-  /// @notice mintBadge Mint `_amount` badges to `_owner`
-  /// @param _owner The address of the account receiving the tokens
-  /// @param _amount The amount of tokens to mint
-  /// @return Whether or not minting was successful
-  function mintBadge(address _owner, uint256 _amount) returns (bool success);
-
-  function registerDao(address _dao) returns (bool success);
-
-  function registerSeller(address _tokensales) returns (bool success);
+  function calculateTxFee(uint256 _value, address _user) public returns (uint256);
 
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event SendBadge(address indexed _from, address indexed _to, uint256 _amount);
@@ -117,15 +112,24 @@ contract swap{
     
     modifier afterExpiry() { if (now >= expiryDate) _ }
     
+    modifier ifBeneficiary() { 
+        if (beneficiary != msg.sender) {
+            throw;
+        } else {
+            _
+        }
+    }
+    
     //This function checks if the expiry date has passed and if it has, then returns the tokens to the beneficiary
     function checkExpiry() afterExpiry{
         uint balance = tokenObj.allowance(msg.sender, this);
         tokenObj.transfer(beneficiary, balance);
     }
     
-    
-    
-    
-    
-    
+    // This function is a fail-safe in case someone "sends" the tokens to this contract instead of "approving" them
+    function emergencyWithdrawal() ifBeneficiary{
+        uint txnFee = tokenObj.calculateTxFee(balance, this);
+        uint amountReturned = balance - txnFee;
+        tokenObj.transfer(beneficiary, amountReturned);
+    }
 }
