@@ -122,4 +122,10 @@ contract swap{
         uint balance = tokenObj.allowance(msg.sender, this);
         tokenObj.transfer(beneficiary, balance);
     }
+    
+    
+    
+    
+    
+    
 }
