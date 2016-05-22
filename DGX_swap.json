@@ -106,6 +106,17 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      
+    ],
+    "name": "killSwap",
+    "outputs": [
+      
+    ],
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       
