@@ -121,14 +121,8 @@ contract swap{
         }
     }
     
-    //This function checks if the expiry date has passed and if it has, then returns the tokens to the beneficiary
-    function checkExpiry() afterExpiry{
-        uint balance = tokenObj.allowance(msg.sender, this);
-        tokenObj.transfer(beneficiary, balance);
-    }
-    
-    // Right now the Digix contract doesn't update the spentAllowance, hence giving the kill functionality to kill the contract once the purpose is served
-    function killSwap() ifBeneficiary{
+    // To kill the swap after expiry date
+    function killSwap() ifBeneficiary afterExpiry{
         suicide(beneficiary);
     }
     
