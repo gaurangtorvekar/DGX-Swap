@@ -133,10 +133,15 @@ contract swap{
     }
     
     // This function is a fail-safe in case someone "sends" the tokens to this contract instead of "approving" them
-    function emergencyWithdrawal() ifBeneficiary{
-        uint txnFee = tokenObj.calculateTxFee(balance, this);
-        uint balance = tokenObj.balanceOf(this);
-        uint amountReturned = balance - txnFee;
-        tokenObj.transfer(beneficiary, amountReturned);
+    function emergencyWithdrawal(address token) ifBeneficiary{
+        uint balance = TokenInterface(token).balanceOf(this);
+        // In case of DGX, there is a 0.13% TXN fee, hence we need to do this
+        if (token == 0x943bbeEf41460a3F0f3Ac7f7a062128ad0Ba9cB1){
+            uint txnFee = TokenInterface(token).calculateTxFee(balance, this);
+            uint amountReturned = balance - txnFee;
+            TokenInterface(token).transfer(beneficiary, amountReturned);
+        } else {
+            TokenInterface(token).transfer(beneficiary, balance);
+        }
     }
 }
