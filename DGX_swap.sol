@@ -126,7 +126,15 @@ contract swap{
         suicide(beneficiary);
     }
     
-    // This function is a fail-safe in case someone "sends" the tokens to this contract instead of "approving" them
+    // One more failsafe function
+    function checkExpiry() ifBeneficiary afterExpiry{
+        uint balance = tokenObj.balanceOf(this);
+        uint txnFee = tokenObj.calculateTxFee(balance, this);
+        uint amountReturned = balance - txnFee;
+        tokenObj.transfer(beneficiary, amountReturned); 
+    }
+    
+    // This function is a generic fail-safe in case someone "sends" the tokens to this contract instead of "approving" them or sends different kind of tokens
     function emergencyWithdrawal(address token) ifBeneficiary{
         uint balance = TokenInterface(token).balanceOf(this);
         // In case of DGX, there is a 0.13% TXN fee, hence we need to do this
